@@ -7,26 +7,27 @@ pipeline {
     }
 
     stages {
-        stage('Github checkout') {
+        stage('Git Checkout') {
             steps {
                 git branch: 'main',
                     url: 'https://github.com/rahmabensaidd/devOpsworkshop.git'
             }
         }
 
-        stage("Build") {
+        stage('Build') {
             steps {
-                sh "mvn clean compile"
+                // Génère un JAR exécutable
+                sh "mvn clean package -DskipTests"
             }
         }
 
-        stage("Test") {
+        stage('Test') {
             steps {
                 sh "mvn test"
             }
         }
 
-        stage("SonarQube Analysis") {
+        stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('jenkins-sonar') {
                     sh "mvn sonar:sonar"
@@ -44,14 +45,19 @@ pipeline {
             }
         }
 
-        stage('Docker Build & Push') {
+        stage('Docker Build') {
             steps {
                 sh "docker build -t ${SPRING_IMAGE_NAME}:${SPRING_IMAGE_TAG} ."
+            }
+        }
+
+        stage('Docker Push') {
+            steps {
                 sh "docker push ${SPRING_IMAGE_NAME}:${SPRING_IMAGE_TAG}"
             }
         }
 
-        stage("Deploy with Docker Compose") {
+        stage('Deploy with Docker Compose') {
             steps {
                 sh '''
                     docker compose down
