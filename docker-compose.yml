@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: eventsProjectDevOps
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - events-network
+
+  spring-boot-app:
+    image: bensalahons/events-project:2.0.O
+    container_name: spring-boot-app
+    restart: on-failure
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/eventsProjectDevOps?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 
+      SPRING_JPA_SHOW_SQL: "true"
+    ports:
+      - "8089:8089"
+    depends_on:
+      - mysql
+    networks:
+      - events-network
+    tty: true
+    stdin_open: true
+
+volumes:
+  mysql-data:
+
+networks:
+  events-network:
