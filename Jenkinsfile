@@ -11,8 +11,8 @@ pipeline {
     stages {
         stage('Github checkout') {
             steps {
-                git branch: 'master',
-                url: 'https://github.com/OnsBENSALAH/devOpsWinterWorkshop.git'
+                git branch: 'main',
+                url: 'https://github.com/rahmabensaidd/devOpsworkshop.git'
                 
             }
         }
